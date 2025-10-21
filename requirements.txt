@@ -3,4 +3,6 @@ tf-keras
 fastapi
 uvicorn
 deepface
+python-multipart
+
 
