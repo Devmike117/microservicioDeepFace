@@ -1,4 +1,3 @@
-# filename: deepface_service.py
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from deepface import DeepFace
@@ -7,37 +6,37 @@ import uvicorn
 
 app = FastAPI(title="DeepFace Embedding Service")
 
-# Permitir CORS para tu frontend / backend
+# CORS: en producción, reemplaza "*" por tus dominios específicos
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Cambia esto a tus dominios en producción
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+@app.get("/")
+def root():
+    return {"status": "Servicio activo", "endpoint": "/generate_embedding"}
+
 @app.post("/generate_embedding/")
 async def generate_embedding(file: UploadFile = File(...)):
     if not file.filename.lower().endswith(('.png', '.jpg', '.jpeg')):
-        raise HTTPException(status_code=400, detail="Archivo no soportado")
+        raise HTTPException(status_code=400, detail="Formato de archivo no soportado")
 
-    file_location = f"temp_{file.filename}"
+    file_location = f"/tmp/temp_{file.filename}"  # Render recomienda usar /tmp
     try:
-        # Guardar temporalmente la imagen
         with open(file_location, "wb") as f:
             f.write(await file.read())
 
-        # Generar embedding con DeepFace
         result = DeepFace.represent(img_path=file_location, model_name='Facenet', enforce_detection=True)
 
         if not result or len(result) == 0:
             raise HTTPException(status_code=400, detail="No se detectó ninguna cara en la imagen")
 
-        # Tomar solo la primera cara detectada
         embedding_vector = result[0]["embedding"]
         embedding_list = embedding_vector if isinstance(embedding_vector, list) else embedding_vector.tolist()
 
-        # Imprimir en consola
         print(f"Embeddings generados para {file.filename}:\n{embedding_list}\n")
 
         return {"embedding": embedding_list, "model": "Facenet"}
@@ -51,5 +50,7 @@ async def generate_embedding(file: UploadFile = File(...)):
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=10000)
+
+
 
 
