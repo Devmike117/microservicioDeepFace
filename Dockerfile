@@ -15,4 +15,4 @@ RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r re
 ENV PORT=8000
 EXPOSE $PORT
 
-CMD ["sh", "-c", "uvicorn deepface_service:app --host 0.0.0.0 --port $PORT"]
+CMD uvicorn deepface_service:app --host 0.0.0.0 --port=${PORT}
