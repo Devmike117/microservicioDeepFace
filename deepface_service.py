@@ -2,7 +2,6 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from deepface import DeepFace
 import os
-import uvicorn
 
 app = FastAPI(title="DeepFace Embedding Service")
 
@@ -24,7 +23,7 @@ async def generate_embedding(file: UploadFile = File(...)):
     if not file.filename.lower().endswith(('.png', '.jpg', '.jpeg')):
         raise HTTPException(status_code=400, detail="Formato de archivo no soportado")
 
-    file_location = f"/tmp/temp_{file.filename}"  # Render recomienda usar /tmp
+    file_location = f"/tmp/temp_{file.filename}"
     try:
         with open(file_location, "wb") as f:
             f.write(await file.read())
@@ -48,8 +47,7 @@ async def generate_embedding(file: UploadFile = File(...)):
         if os.path.exists(file_location):
             os.remove(file_location)
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=10000)
+
 
 
 
