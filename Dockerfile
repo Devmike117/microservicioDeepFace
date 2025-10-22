@@ -18,6 +18,10 @@ COPY .deepface/weights /root/.deepface/weights
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
+# Copia el script de entrada y dale permisos
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 EXPOSE 8000
 
-CMD ["sh", "-c", "uvicorn deepface_service:app --host 0.0.0.0 --port=${PORT:-8000}"]
+CMD ["/entrypoint.sh"]
