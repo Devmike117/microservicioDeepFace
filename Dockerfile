@@ -16,14 +16,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Define el directorio de trabajo
 WORKDIR /app
 
-# Copia el proyecto
+# Copia los archivos del proyecto
 COPY . /app
+
+# Copia los pesos de DeepFace al contenedor
+COPY .deepface/weights /root/.deepface/weights
 
 # Instala dependencias desde requirements.txt
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Define puerto por defecto
+# Define puerto por defecto (Railway asigna dinámicamente)
 ENV PORT=8000
 EXPOSE 8000
 
