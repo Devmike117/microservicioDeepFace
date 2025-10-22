@@ -1,4 +1,5 @@
-# Imagen base ligera compatible con TensorFlow y DeepFace
+
+# Imagen base ligera compatible con DeepFace y OpenCV
 FROM python:3.10-slim-bookworm
 
 # Evita prompts durante instalación
@@ -26,9 +27,8 @@ COPY .deepface/weights /root/.deepface/weights
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Define puerto por defecto (Railway asigna dinámicamente)
-ENV PORT=8000
+# Expone el puerto que Railway redirige internamente
 EXPOSE 8000
 
-# Ejecutar con shell para que ${PORT} se expanda correctamente
-CMD sh -c "uvicorn deepface_service:app --host 0.0.0.0 --port ${PORT:-8000}"
+# Ejecuta Uvicorn con el puerto dinámico proporcionado por Railway
+CMD ["uvicorn", "deepface_service:app", "--host", "0.0.0.0", "--port", "8000"]
