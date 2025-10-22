@@ -1,4 +1,3 @@
-
 # Imagen base ligera compatible con DeepFace y OpenCV
 FROM python:3.10-slim-bookworm
 
@@ -31,4 +30,5 @@ RUN pip install --no-cache-dir --upgrade pip && \
 EXPOSE 8000
 
 # Ejecuta Uvicorn con el puerto dinámico proporcionado por Railway
-CMD ["uvicorn", "deepface_service:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uvicorn deepface_service:app --host 0.0.0.0 --port=${PORT:-8000}"]
+
